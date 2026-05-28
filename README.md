@@ -27,6 +27,10 @@ pip install -r requirements.txt
 
 O projeto usa `python-dotenv` para carregar o ID do projeto do Google Cloud.
 
+Para ter acesso ao big query, acesse https://basedosdados.org/dataset/f06f3cdc-b539-409b-b311-1ff8878fb8d9?table=a3696dc2-4dd1-4f7e-9769-6aa16a1556b8
+
+O site do basedosdados tem tutoriais explicando como criar sua conta no Google Cloud e acessar o banco de dados via Big Query
+
 Defina em `env.env`:
 
 ```env
