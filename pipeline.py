@@ -158,39 +158,25 @@ def minerar_regras_clima_bioma(
     df,
     amostra=50000,
     suporte_minimo=0.05,
-    confianca_minima=0.6,
+    confianca_minima=0.9,
     lift_minimo=1.0,
-    # === VARIÁVEIS CONFIGURÁVEIS PARA DISCRETIZAÇÃO ===
-    colunas_categoricas=None,  # Ex: ['bioma', 'mes', 'satelite']
-    colunas_numericas=None,    # Ex: ['precipitacao', 'risco_fogo', 'dias_sem_chuva']
-    bins_discretizacao=None,   # Ex: {'precipitacao': [[-1, 0.5], [0.5, 10.0], [10.0, float('inf')]], ...}
-    labels_categorias=None,    # Ex: {'precipitacao': ['Sem Chuva', 'Chuva Leve', 'Chuva Forte'], ...}
-    filtros_adicionais=None,   # Ex: {'ano': [2023, 2024, 2025], 'bioma': ['Cerrado', 'Floresta Amazônica']}
     verbose=True
 ):
 
     
     # ========== VALORES PADRÃO (CONFIGURÁVEIS) ==========
-    if colunas_categoricas is None:
-        colunas_categoricas = ['bioma', 'mes', 'satelite', 'sigla_uf']
-    
-    if colunas_numericas is None:
-        colunas_numericas = ['precipitacao', 'risco_fogo', 'dias_sem_chuva']
-    
-    # Bins padrão para discretização
-    if bins_discretizacao is None:
-        bins_discretizacao = {
-            'precipitacao': [[-1, 0.5], [0.5, 10.0], [10.0, float('inf')]],
-            'risco_fogo': [[-1, 0.3], [0.3, 0.7], [0.7, float('inf')]],
-            'dias_sem_chuva': [[-1, 7], [7, 14], [14, float('inf')]]
+    colunas_categoricas = ['bioma', 'mes', 'sigla_uf']
+    colunas_numericas = ['precipitacao', 'risco_fogo', 'dias_sem_chuva']
+    bins_discretizacao = {
+        'precipitacao': [[-1, 0.5], [0.5, 10.0], [10.0, float('inf')]],
+        'risco_fogo': [[-1, 0.3], [0.3, 0.7], [0.7, float('inf')]],
+        'dias_sem_chuva': [[-1, 7], [7, 14], [14, float('inf')]],
         }
     
-    # Labels padrão para categorias
-    if labels_categorias is None:
-        labels_categorias = {
-            'precipitacao': ['Sem Chuva', 'Chuva Leve', 'Chuva Forte'],
-            'risco_fogo': ['Risco Baixo', 'Risco Médio', 'Risco Alto'],
-            'dias_sem_chuva': ['Dias Poucos', 'Dias Moderados', 'Dias Muitos']
+    labels_categorias = {
+        'precipitacao': ['Sem Chuva', 'Chuva Leve', 'Chuva Forte'],
+        'risco_fogo': ['Risco Baixo', 'Risco Médio', 'Risco Alto'],
+        'dias_sem_chuva': ['Poucos Dias sem chuva', 'Consideráveis Dias sem chuva', 'Muitos Dias sem chuva']
         }
     
     if verbose:
@@ -210,15 +196,6 @@ def minerar_regras_clima_bioma(
     # ========== PRÉ-PROCESSAMENTO ==========
     df_trabalho = df.copy()
     
-    # Aplicar filtros adicionais
-    if filtros_adicionais:
-        if verbose:
-            print(f"\nAplicando filtros adicionais...")
-        for col, valores in filtros_adicionais.items():
-            if col in df_trabalho.columns:
-                df_trabalho = df_trabalho[df_trabalho[col].isin(valores)]
-                if verbose:
-                    print(f"   - {col}: {valores}")
     
     # Selecionar apenas as colunas necessárias
     df_trabalho = df_trabalho[colunas_necessarias].copy().dropna()
